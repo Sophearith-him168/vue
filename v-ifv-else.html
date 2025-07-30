@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue js</title>
+  </head>
+  <body>
+    <div id="app">
+      <h2 v-if="user.role === 'admin'">សូមស្វាគមន៍ អ្នកគ្រប់គ្រង</h2>
+      <h2 v-else-if="user.role === 'editor'">សូមស្វាគមន៍ អ្នកកែសម្រួល</h2>
+      <h2 v-else>សូមស្វាគមន៍ អ្នកមើលទូទៅ</h2>
+
+      <button @click="toggleLogin">{{ isLoggedIn ? 'ចេញ' : 'ចូល' }}</button>
+      <p v-if="isLoggedIn">អ្នកបានចូលប្រើ!</p>
+      <p v-else>សូមចូលសិន។</p>
+    </div>
+  </body>
+  <script src="./vue_engine.js"></script>
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          isLoggedIn: false,
+          user: {
+            role: "editor",
+          },
+        };
+      },
+      methods: {
+    toggleLogin() {
+      this.isLoggedIn = !this.isLoggedIn;
+    }
+  }
+    }).mount("#app");
+  </script>
+</html>

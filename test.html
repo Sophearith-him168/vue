@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue js</title>
+  </head>
+  <body>
+    <div id="app">
+      <a v-bind:href="url">ចូលទៅកាន់គេហទំព័រ</a>
+      <br />
+      <p v-bind:style="{ color: text, fontSize: font }">Hello Vue.js!</p>
+      <br />
+      <br />
+      <br />
+      <br />
+      <a :href="siteLink" target="_blank">ចូលទៅកាន់ Website</a>
+      <img :src="logoUrl" alt="Logo" width="100" />
+
+      <p :class="{ active: isActive }">ប្រើ class dynamic</p>
+      <p :style="{ fontSize: size + 'px', color: textColor }">Dynamic style</p>
+
+      <button :disabled="isLoading">បញ្ជូន</button>
+    </div>
+  </body>
+  <script src="./vue_engine.js"></script>
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          url: "https://vuejs.org",
+          img: "https://vuejs.org/images/logo.png",
+          text: "blue",
+          font: "20px",
+          siteLink: "https://vuejs.org",
+          logoUrl: "https://vuejs.org/images/logo.png",
+          isActive: true,
+          isLoading: false,
+          size: 18,
+          textColor: "green",
+        };
+      },
+    }).mount("#app");
+  </script>
+</html>

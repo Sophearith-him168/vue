@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue js</title>
+    <link rel="stylesheet" href="./boostrab.css" />
+  </head>
+  <style>
+    /* .form-style {
+      background-color: whitesmoke;
+      border-radius: 10px;
+      box-shadow: 0px 2px 11px 10px #cccc;
+    } */
+    .card-body .btn {
+      margin-bottom: 16px; /* Adjust as needed */
+    }
+    .card {
+      margin-bottom: 24px; /* Adjust as needed */
+    }
+    .product-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .product-description {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+  <body>
+    <div id="app">
+      <!-- Product Detail Modal -->
+      <div
+        class="modal fade"
+        id="productDetailModal"
+        tabindex="-1"
+        aria-labelledby="productDetailModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content shadow-lg border-0 rounded-lg">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="productDetailModalLabel">
+                {{ selectedProduct.title }}
+              </h5>
+              <button
+                type="button"
+                class="close btn btn-outline-primary text-white"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div
+              class="modal-body"
+              v-if="selectedProduct && selectedProduct.title"
+            >
+              <div class="row">
+                <!-- Product Image -->
+                <div class="col-md-5 text-center mb-3 mb-md-0">
+                  <img
+                    :src="selectedProduct.image"
+                    alt="Product Image"
+                    class="img-fluid border rounded"
+                    style="max-height: 300px; object-fit: contain"
+                  />
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-md-7">
+                  <p>
+                    <strong>Category:</strong> {{ selectedProduct.category }}
+                  </p>
+                  <p>
+                    <strong>Description:</strong><br />{{
+                    selectedProduct.description }}
+                  </p>
+                  <p>
+                    <strong>Price:</strong>
+                    <span class="text-success h5"
+                      >$ {{ selectedProduct.price }}</span
+                    >
+                  </p>
+
+                  <button
+                    class="btn btn-outline-success btn-sm mt-2"
+                    @click="addToCart(selectedProduct)"
+                  >
+                    <i class="fas fa-cart-plus"></i> Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <div class="container-fluid">
+            <h1 class="navbar-brand">Rith Mart ng haa</h1>
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <form class="d-flex" role="search">
+              <input
+                v-model="txt_search"
+                @input="livesearch()"
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+            </form>
+
+            <form class="d-flex">
+              <button class="btn btn-success" type="button">
+                Cart
+                <span class="badge badge-pill text-white">{{ cartCount }}</span>
+              </button>
+            </form>
+          </div>
+        </nav>
+        <div class="mb-3">
+          <button
+            class="btn btn-outline-secondary mr-2 mb-2"
+            :style="{ backgroundColor: Getrandomcolor(), color: '#fff' }"
+            @click="filter_category('All')"
+          >
+            All Category
+          </button>
+          <button
+            v-for="(cat, index) in category_list"
+            :key="index"
+            class="btn btn-outline-secondary mr-2 mb-2"
+            :style="{ backgroundColor: Getrandomcolor(), color: '#fff' }"
+            @click="filter_category(cat)"
+          >
+            {{ cat }}
+          </button>
+        </div>
+
+        <div class="row" style="margin-top: 20px; margin-bottom: 20px">
+          <div class="col-3" v-for="(i, index) in product_list" :key="index">
+            <!-- card -->
+            <div class="card" style="width: 18rem">
+              <img
+                :src="i.image"
+                class="card-img-top"
+                style="height: 200px; width: 100%; object-fit: contain"
+                alt="..."
+              />
+              <div class="card-body">
+                <h5 class="card-title product-title">{{ i.title }}</h5>
+                <p
+                  @click="openProductModal(i)"
+                  class="card-text product-description"
+                >
+                  <span class="category">{{ i.category }}</span>
+                  {{ i.description }}
+                </p>
+                <a
+                  href="#"
+                  class="btn btn-primary"
+                  @click.prevent="addToCart(i)"
+                  >Add to Cart</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./vue_engine.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      created() {
+        this.fetchData();
+        this.loadCart();
+      },
+      data() {
+        return {
+          org_product_list: [],
+          product_list: [],
+          category_list: [],
+          selectedProduct: {},
+          cart: [],
+          txt_search: null,
+        };
+      },
+      computed: {
+        cartCount() {
+          return this.cart.length;
+        },
+      },
+      methods: {
+        fetchData() {
+          let vm = this;
+          $.LoadingOverlay("show", {
+            background: "rgba(165, 190, 100, 0.5)",
+          });
+          axios
+            .get("https://fakestoreapi.com/products")
+            .then(function (response) {
+              // handle success
+              if (response.status === 200) {
+                vm.org_product_list = response.data;
+                vm.product_list = vm.org_product_list;
+                let u_category_list = new Set();
+                let all_categories_list = response.data.map(
+                  (item) => item.category
+                );
+                for (let category of all_categories_list) {
+                  u_category_list.add(category);
+                }
+                vm.category_list = [...u_category_list];
+
+                $.LoadingOverlay("hide", {
+                  background: "rgba(165, 190, 100, 0.5)",
+                });
+              }
+            })
+            .catch(function (error) {
+              // handle error
+              console.log(error);
+            });
+        },
+        openProductModal(product) {
+          this.selectedProduct = product;
+          $("#productDetailModal").modal("show");
+        },
+        showModal() {
+          $("#staticBackdrop").modal("show");
+        },
+        addToCart(product) {
+          this.cart.push(product);
+          localStorage.setItem("cart", JSON.stringify(this.cart));
+        },
+        loadCart() {
+          let cartData = localStorage.getItem("cart");
+          if (cartData) {
+            this.cart = JSON.parse(cartData);
+          }
+        },
+        filter_category(category) {
+          if (category === "All") {
+            this.product_list = this.org_product_list;
+          } else {
+            this.product_list = this.org_product_list.filter(
+              (item) => item.category === category
+            );
+          }
+        },
+        Getrandomcolor() {
+          return "#" + Math.floor(Math.random() * 16777215).toString(16);
+        },
+        livesearch() {
+          let input = this.txt_search || "";
+          this.product_list = this.org_product_list.filter((n) => {
+            return n.title.toLowerCase().includes(input.toLowerCase());
+          });
+        },
+      },
+    }).mount("#app");
+  </script>
+</html>
